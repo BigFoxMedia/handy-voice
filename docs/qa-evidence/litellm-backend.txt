@@ -1,0 +1,9 @@
+LiteLLM model/key check:
+  GET /v1/models with the handy-android virtual key -> [stt-whisper-local]
+
+At validation time (2026-11-24):
+  POST /v1/audio/transcriptions -> HTTP 500 APIConnectionError
+  because the whisper-v3-turbo container on LXC 151 was down with CUDA OOM.
+  The desktop Handy CLI had transcribed through LiteLLM earlier when the
+  backend was up; the phone app handles the backend-down case with a clear
+  "Remote failed" status.

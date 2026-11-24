@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Handy Voice</string>
+    <string name="accessibility_description">Inserts Handy Voice transcripts into the currently focused text field. Handy Voice uses this only when you tap the floating microphone.</string>
+</resources>
