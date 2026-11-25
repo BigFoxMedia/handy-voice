@@ -1,7 +1,7 @@
 # Handy Voice Android MVP QA — 2026-11-24
 
 Environment: Android 35 x86_64 emulator (Pixel 6 profile) inside Docker with
-KVM; APK `HandyVoice-0.1.0-debug.apk`; mock endpoint at
+KVM; APK series `HandyVoice-0.2.1-debug.apk` (screenshots captured across the 0.1/0.2 MVP builds); mock endpoint at
 `http://10.0.2.2:9101/v1` for the success path; no real microphone in the
 emulator, so audio is silence and insertion is proven with the mock response.
 
