@@ -98,7 +98,7 @@ class OverlayService : Service() {
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
-            setPadding(dp(8), dp(8), dp(8), dp(8))
+            setPadding(dp(4), dp(4), dp(4), dp(4))
         }
 
         micView = ImageView(this).apply {
@@ -106,7 +106,7 @@ class OverlayService : Service() {
             scaleType = ImageView.ScaleType.FIT_CENTER
             contentDescription = "Start or stop Handy Voice recording"
             background = circleDrawable(Color.parseColor("#E8488C"))
-            setPadding(dp(14), dp(14), dp(14), dp(14))
+            setPadding(dp(9), dp(9), dp(9), dp(9))
         }
         val micRow = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
@@ -114,13 +114,13 @@ class OverlayService : Service() {
         }
         micRow.addView(
             micView,
-            LinearLayout.LayoutParams(dp(76), dp(76)),
+            LinearLayout.LayoutParams(dp(48), dp(48)),
         )
 
         cancelView = TextView(this).apply {
             text = "X"
             setTextColor(Color.WHITE)
-            textSize = 18f
+            textSize = 14f
             gravity = Gravity.CENTER
             background = circleDrawable(Color.parseColor("#B52C55"))
             contentDescription = "Cancel recording"
@@ -129,23 +129,23 @@ class OverlayService : Service() {
         }
         micRow.addView(
             cancelView,
-            LinearLayout.LayoutParams(dp(44), dp(44)).apply { leftMargin = dp(8) },
+            LinearLayout.LayoutParams(dp(32), dp(32)).apply { leftMargin = dp(5) },
         )
         root.addView(micRow)
 
         statusView = TextView(this).apply {
-            text = "Tap mic to record"
+            text = "Tap mic"
             setTextColor(Color.WHITE)
-            textSize = 12f
+            textSize = 9f
             background = pillDrawable(Color.argb(175, 0, 0, 0))
-            setPadding(dp(10), dp(5), dp(10), dp(5))
+            setPadding(dp(6), dp(3), dp(6), dp(3))
         }
         root.addView(
             statusView,
             LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-            ).apply { topMargin = dp(6) },
+            ).apply { topMargin = dp(3) },
         )
 
         overlayParams = WindowManager.LayoutParams(
@@ -157,8 +157,8 @@ class OverlayService : Service() {
             PixelFormat.TRANSLUCENT,
         ).apply {
             gravity = Gravity.TOP or Gravity.START
-            x = dp(18)
-            y = dp(120)
+            x = dp(8)
+            y = dp(80)
         }
 
         micView.setOnTouchListener { _, event ->
@@ -230,17 +230,17 @@ class OverlayService : Service() {
 
     private fun startRecording() {
         if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            updateStatus("Microphone permission missing")
+            updateStatus("Mic permission")
             Toast.makeText(this, "Grant microphone permission in the app", Toast.LENGTH_LONG).show()
             return
         }
         if (!recorder.start()) {
-            updateStatus("Could not start microphone")
+            updateStatus("Mic error")
             return
         }
         recording = true
         setRecordingUi(true)
-        updateStatus("Recording… tap mic to stop, X to cancel")
+        updateStatus("Recording…")
     }
 
     private fun cancelRecording() {
@@ -258,7 +258,7 @@ class OverlayService : Service() {
         setRecordingUi(false)
 
         if (pcm.isEmpty()) {
-            updateStatus("No audio recorded")
+            updateStatus("No audio")
             resetStatusSoon()
             return
         }
@@ -287,7 +287,7 @@ class OverlayService : Service() {
                     updateStatus("Inserted")
                 } else {
                     copyToClipboard(outcome.text)
-                    updateStatus("Copied — paste manually")
+                    updateStatus("Copied")
                 }
                 resetStatusSoon()
             }
@@ -295,7 +295,8 @@ class OverlayService : Service() {
                 if (settings.fallbackEnabled) {
                     startLocalFallback()
                 } else {
-                    updateStatus("Remote failed: ${outcome.message}")
+                    updateStatus("Remote failed")
+                    Toast.makeText(this, outcome.message, Toast.LENGTH_LONG).show()
                     resetStatusSoon()
                 }
             }
@@ -317,14 +318,14 @@ class OverlayService : Service() {
 
     private fun startLocalFallback() {
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {
-            updateStatus("Remote failed; local speech recognition unavailable")
+            updateStatus("Fallback unavailable")
             resetStatusSoon()
             return
         }
 
         cancelLocalFallback()
         localFallbackActive = true
-        updateStatus("Remote failed — speak again for local fallback")
+        updateStatus("Speak for fallback")
 
         val recognizer = SpeechRecognizer.createSpeechRecognizer(this)
         speechRecognizer = recognizer
@@ -335,12 +336,13 @@ class OverlayService : Service() {
             override fun onBufferReceived(buffer: ByteArray?) {}
 
             override fun onEndOfSpeech() {
-                updateStatus("Transcribing locally…")
+                updateStatus("Transcribing…")
             }
 
             override fun onError(error: Int) {
                 localFallbackActive = false
-                updateStatus("Local fallback failed: ${speechErrorMessage(error)}")
+                updateStatus("Fallback failed")
+                Toast.makeText(this@OverlayService, speechErrorMessage(error), Toast.LENGTH_SHORT).show()
                 resetStatusSoon()
             }
 
@@ -351,12 +353,12 @@ class OverlayService : Service() {
                     ?.firstOrNull()
                     .orEmpty()
                 if (text.isBlank()) {
-                    updateStatus("Local fallback returned no text")
+                    updateStatus("Fallback empty")
                 } else if (insertText(text)) {
-                    updateStatus("Inserted (local fallback)")
+                    updateStatus("Inserted")
                 } else {
                     copyToClipboard(text)
-                    updateStatus("Copied (local fallback) — paste manually")
+                    updateStatus("Copied")
                 }
                 resetStatusSoon()
             }
@@ -418,7 +420,7 @@ class OverlayService : Service() {
     private fun resetStatusSoon() {
         handler.postDelayed({
             if (!recording && !pendingRequest && !localFallbackActive) {
-                updateStatus("Tap mic to record")
+                updateStatus("Tap mic")
                 setRecordingUi(false)
             }
         }, RESET_DELAY_MS)
