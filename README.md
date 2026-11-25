@@ -8,12 +8,11 @@ AccessibilityService. It is sideload-only: no Play Store, no product polish.
 ## Artifact
 
 ```text
-/home/dev/Downloads/HandyVoice-0.1.0-debug.apk
-sha256 4ae7d47c82df57c73a42e46e1cfaa2975712a1be5ffd28a16d00794ce55dcf8d
+/home/dev/Downloads/HandyVoice-0.2.1-debug.apk
+sha256 5cd4f7f9b2936772667a4fe3cf82e081e82b22d9e3d17a8f3378f34103ca1e88
 ```
 
-Package `com.bigfoxmedia.handyvoice`, version `0.1.0`, min SDK 26, target SDK 35,
-debug-signed.
+Package `com.bigfoxmedia.handyvoice`, version `0.2.1` (versionCode 3), min SDK 26, target SDK 35, debug-signed.
 
 ## Build
 
@@ -22,11 +21,16 @@ The host has Docker; Android SDK/JDK build happens in a container.
 ```bash
 cd /home/dev/projects/handy-voice
 docker build -t handy-voice-android -f Dockerfile.android .
+./scripts/bump-version.sh   # always increment before publishing an APK
 docker run --rm -v "$PWD:/workspace" -w /workspace handy-voice-android \
-  bash -lc './gradlew lintDebug testDebugUnitTest assembleDebug'
+  bash -lc 'gradle lintDebug testDebugUnitTest assembleDebug'
 ```
 
 APK output: `app/build/outputs/apk/debug/app-debug.apk`.
+
+The project uses a committed debug keystore (`app/debug.keystore`) so debug APKs
+keep the same signing identity across builds. Always increment `versionCode` and
+`versionName` before publishing; `scripts/bump-version.sh` does that.
 
 ## Install and enable
 
