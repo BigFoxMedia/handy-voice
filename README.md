@@ -9,7 +9,7 @@ AccessibilityService. It is sideload-only: no Play Store, no product polish.
 
 ```text
 /home/dev/Downloads/HandyVoice-0.1.0-debug.apk
-sha256 1042543bd3f4be2072b4a0fd912e6d60b587c60cee2dde7e3e1edef3813584eb
+sha256 43c2eda4c4471c2a9bc27b59d2157b10b379f9edb71c7d7187e47d51ec87741f
 ```
 
 Package `com.bigfoxmedia.handyvoice`, version `0.1.0`, min SDK 26, target SDK 35,

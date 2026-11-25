@@ -8,6 +8,7 @@ emulator, so audio is silence and insertion is proven with the mock response.
 | Flow | Evidence | Verdict |
 |---|---|---|
 | Settings screen renders with base URL, model, API key, language, fallback toggle, permissions | `01-settings.png` | PASS |
+| Smaller overlay footprint (48dp mic, compact status pill) | `11-small-overlay.png` | PASS |
 | Floating overlay appears over another app (Chrome) | `06-overlay-over-chrome.png` | PASS |
 | Mock transcript inserted into Chrome's address/search field | `09-browser-field-insertion.png` | PASS |
 | Overlay appears over Messages compose; no SIM in emulator, so SMS insertion is not testable here | `10-sms-compose-overlay.png` | PASS (overlay), SMS insertion pending on phone |
