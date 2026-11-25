@@ -95,7 +95,8 @@ injection. Newest iOS devices only. No iOS build in this MVP.
 - Some apps block AccessibilityService text insertion, and some use secure
   windows where overlays are hidden. The app falls back to clipboard.
 - Android Settings did not show the overlay in the emulator; Chrome did. That is
-  app/system-window behavior, not a missing overlay permission.
+  app/system-window behavior, not a missing overlay permission. SMS compose
+  could not be tested because the emulator has no SIM; the overlay did appear.
 - The fallback requires speaking again; it is not a seamless local transcribe of
   the recorded clip.
 - The emulator has no real microphone, so audio was silence; remote success was

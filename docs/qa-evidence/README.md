@@ -9,6 +9,8 @@ emulator, so audio is silence and insertion is proven with the mock response.
 |---|---|---|
 | Settings screen renders with base URL, model, API key, language, fallback toggle, permissions | `01-settings.png` | PASS |
 | Floating overlay appears over another app (Chrome) | `06-overlay-over-chrome.png` | PASS |
+| Mock transcript inserted into Chrome's address/search field | `09-browser-field-insertion.png` | PASS |
+| Overlay appears over Messages compose; no SIM in emulator, so SMS insertion is not testable here | `10-sms-compose-overlay.png` | PASS (overlay), SMS insertion pending on phone |
 | Recording starts and shows the cancel X | `02-recording-cancel.png` | PASS |
 | X cancels without uploading; status “Cancelled” | `03-cancelled.png` | PASS |
 | Remote mock success inserts text into the focused editable field via AccessibilityService | `04-inserted.png` | PASS |
