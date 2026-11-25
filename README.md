@@ -9,7 +9,7 @@ AccessibilityService. It is sideload-only: no Play Store, no product polish.
 
 ```text
 /home/dev/Downloads/HandyVoice-0.1.0-debug.apk
-sha256 43c2eda4c4471c2a9bc27b59d2157b10b379f9edb71c7d7187e47d51ec87741f
+sha256 4ae7d47c82df57c73a42e46e1cfaa2975712a1be5ffd28a16d00794ce55dcf8d
 ```
 
 Package `com.bigfoxmedia.handyvoice`, version `0.1.0`, min SDK 26, target SDK 35,
@@ -41,7 +41,8 @@ APK output: `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Usage
 
-- Tap the floating mic to start recording.
+- The floating mic appears only when an editable text field is focused and the keyboard is open. It is hidden otherwise.
+- Tap the mic to start recording.
 - Tap it again to stop and send to LiteLLM.
 - While recording, tap **X** to cancel without uploading.
 - The status pill shows Recording / Transcribing / Cancelled / Remote failure.

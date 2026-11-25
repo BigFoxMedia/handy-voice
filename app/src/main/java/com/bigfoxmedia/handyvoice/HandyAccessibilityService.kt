@@ -7,17 +7,26 @@ import android.content.Context
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
 
 class HandyAccessibilityService : AccessibilityService() {
     companion object {
         @Volatile
         var instance: HandyAccessibilityService? = null
             private set
+
+        @Volatile
+        private var editableFocusListener: ((Boolean) -> Unit)? = null
+
+        fun setEditableFocusListener(listener: ((Boolean) -> Unit)?) {
+            editableFocusListener = listener
+        }
     }
 
     override fun onServiceConnected() {
         super.onServiceConnected()
         instance = this
+        refreshEditableFocus()
     }
 
     override fun onDestroy() {
@@ -28,7 +37,22 @@ class HandyAccessibilityService : AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        // Used only on demand by the floating overlay.
+        when (event?.eventType) {
+            AccessibilityEvent.TYPE_VIEW_FOCUSED,
+            AccessibilityEvent.TYPE_VIEW_CLICKED,
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
+            AccessibilityEvent.TYPE_WINDOWS_CHANGED -> refreshEditableFocus()
+        }
+    }
+
+    fun refreshEditableFocus() {
+        val root = rootInActiveWindow
+        val focused = root?.findFocus(AccessibilityNodeInfo.FOCUS_INPUT)
+        val editable = focused?.isEditable == true
+        val keyboardVisible = windows.any {
+            it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD
+        }
+        editableFocusListener?.invoke(editable && keyboardVisible)
     }
 
     override fun onInterrupt() {

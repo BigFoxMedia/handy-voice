@@ -55,6 +55,8 @@ class OverlayService : Service() {
     private var pendingRequest = false
     private var localFallbackActive = false
     private var speechRecognizer: SpeechRecognizer? = null
+    private var overlayAdded = false
+    private var hasEditableFocus = false
 
     override fun onCreate() {
         super.onCreate()
@@ -70,7 +72,17 @@ class OverlayService : Service() {
         }
 
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        showOverlay()
+        HandyAccessibilityService.setEditableFocusListener { focused ->
+            handler.post {
+                hasEditableFocus = focused
+                if (focused) {
+                    showOverlay()
+                } else if (!recording && !pendingRequest && !localFallbackActive) {
+                    hideOverlay()
+                }
+            }
+        }
+        HandyAccessibilityService.instance?.refreshEditableFocus()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -80,21 +92,18 @@ class OverlayService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
+        HandyAccessibilityService.setEditableFocusListener(null)
         handler.removeCallbacksAndMessages(null)
         recorder.cancel()
         speechRecognizer?.destroy()
         speechRecognizer = null
         executor.shutdownNow()
-        if (::windowManager.isInitialized && ::overlayView.isInitialized) {
-            try {
-                windowManager.removeView(overlayView)
-            } catch (_: Exception) {
-            }
-        }
+        hideOverlay()
         super.onDestroy()
     }
 
     private fun showOverlay() {
+        if (!::windowManager.isInitialized || overlayAdded) return
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
@@ -169,10 +178,20 @@ class OverlayService : Service() {
         try {
             windowManager.addView(root, overlayParams)
             overlayView = root
+            overlayAdded = true
         } catch (error: Exception) {
             Toast.makeText(this, "Overlay permission missing: ${error.message}", Toast.LENGTH_LONG).show()
             stopSelf()
         }
+    }
+
+    private fun hideOverlay() {
+        if (!overlayAdded || !::windowManager.isInitialized) return
+        try {
+            windowManager.removeView(overlayView)
+        } catch (_: Exception) {
+        }
+        overlayAdded = false
     }
 
     private var touchDownX = 0f
@@ -422,6 +441,9 @@ class OverlayService : Service() {
             if (!recording && !pendingRequest && !localFallbackActive) {
                 updateStatus("Tap mic")
                 setRecordingUi(false)
+                if (!hasEditableFocus) {
+                    hideOverlay()
+                }
             }
         }, RESET_DELAY_MS)
     }

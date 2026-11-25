@@ -75,7 +75,7 @@ class MainActivity : Activity() {
         })
 
         layout.addView(TextView(this).apply {
-            text = "Remote dictation through LiteLLM. Tap the floating mic, speak, and the transcript is inserted into the focused field."
+            text = "Remote dictation through LiteLLM. The mic appears when you focus a text field and the keyboard is open; speak, then stop to insert the transcript."
             textSize = 14f
             setTextColor(Color.parseColor("#555555"))
             setPadding(0, 0, 0, dp(16))
@@ -255,9 +255,9 @@ class MainActivity : Activity() {
         }
         updatePermissionStatus(
             if (accessibility) {
-                "Overlay started. Tap the floating mic."
+                "Overlay started; it appears when a text field is focused and the keyboard is open."
             } else {
-                "Overlay started; accessibility is not enabled, so insertion falls back to clipboard."
+                "Overlay started; accessibility is not enabled, so insertion falls back to clipboard. Enable it for the mic to appear on keyboard focus."
             },
         )
     }

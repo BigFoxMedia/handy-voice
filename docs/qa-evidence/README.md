@@ -9,6 +9,9 @@ emulator, so audio is silence and insertion is proven with the mock response.
 |---|---|---|
 | Settings screen renders with base URL, model, API key, language, fallback toggle, permissions | `01-settings.png` | PASS |
 | Smaller overlay footprint (48dp mic, compact status pill) | `11-small-overlay.png` | PASS |
+| Overlay hidden while no editable field/keyboard is open | `12-overlay-hidden-until-keyboard.png` | PASS |
+| Overlay appears when a Chrome address field is focused and keyboard is open | `13-overlay-when-keyboard-open.png` | PASS |
+| Overlay disappears when the keyboard closes | `14-overlay-hidden-after-keyboard-closed.png` | PASS |
 | Floating overlay appears over another app (Chrome) | `06-overlay-over-chrome.png` | PASS |
 | Mock transcript inserted into Chrome's address/search field | `09-browser-field-insertion.png` | PASS |
 | Overlay appears over Messages compose; no SIM in emulator, so SMS insertion is not testable here | `10-sms-compose-overlay.png` | PASS (overlay), SMS insertion pending on phone |
